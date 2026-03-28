@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iris ML - Predictive Analytics Dashboard</title>
+    <!-- Modern Font: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <!-- Phosphor Icons for aesthetic icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar glass-panel">
+            <div class="brand">
+                <i class="ph ph-flower-lotus"></i>
+                <h2>Iris<span class="highlight">ML</span></h2>
+            </div>
+            <nav>
+                <a href="#" class="nav-item active"><i class="ph ph-squares-four"></i> Dashboard</a>
+                <a href="#" class="nav-item"><i class="ph ph-chart-line-up"></i> Models</a>
+                <a href="#" class="nav-item"><i class="ph ph-plugs"></i> Integrations</a>
+                <a href="#" class="nav-item"><i class="ph ph-gear"></i> Settings</a>
+            </nav>
+            <div class="user-card">
+                <div class="avatar">Admin</div>
+                <div class="info">
+                    <p class="name">ML Platform</p>
+                    <p class="role">Pro Plan</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="topbar">
+                <div>
+                    <h1 class="page-title">Live Inference Dashboard</h1>
+                    <p class="subtitle">Experience real-time ML predictions powered by FastAPI</p>
+                </div>
+                <div class="api-status">
+                    <div class="status-indicator"></div>
+                    <span id="api-status-text">Checking API...</span>
+                </div>
+            </header>
+
+            <div class="grid-layout">
+                <!-- Experiment 10: Live Real-time Form Input -->
+                <section class="prediction-module glass-panel">
+                    <div class="module-header">
+                        <h3><i class="ph ph-sliders"></i> Adjust Features</h3>
+                        <div class="tag">Real-time</div>
+                    </div>
+                    
+                    <form id="prediction-form">
+                        <div class="input-group">
+                            <label>
+                                <span>Sepal Length 
+                                    <span class="tooltip"><i class="ph ph-info"></i><span class="tooltiptext">Length of the sepal in cm</span></span>
+                                </span>
+                                <span class="val-display" id="sl-val">5.1cm</span>
+                            </label>
+                            <input type="range" id="sepal-length" min="4.0" max="8.0" step="0.1" value="5.1">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>
+                                <span>Sepal Width</span>
+                                <span class="val-display" id="sw-val">3.5cm</span>
+                            </label>
+                            <input type="range" id="sepal-width" min="2.0" max="4.5" step="0.1" value="3.5">
+                        </div>
+
+                        <div class="input-group">
+                            <label>
+                                <span>Petal Length</span>
+                                <span class="val-display" id="pl-val">1.4cm</span>
+                            </label>
+                            <input type="range" id="petal-length" min="1.0" max="7.0" step="0.1" value="1.4">
+                        </div>
+
+                        <div class="input-group">
+                            <label>
+                                <span>Petal Width</span>
+                                <span class="val-display" id="pw-val">0.2cm</span>
+                            </label>
+                            <input type="range" id="petal-width" min="0.1" max="2.5" step="0.1" value="0.2">
+                        </div>
+
+                        <div class="auth-input">
+                            <label for="api-key"><i class="ph ph-key"></i> API Key</label>
+                            <input type="password" id="api-key" value="supersecretapikey" placeholder="Enter X-API-Key">
+                        </div>
+                    </form>
+                </section>
+
+                <!-- Visualization Results -->
+                <div class="results-column">
+                    <!-- The Prediction Output -->
+                    <section class="result-module glass-panel">
+                        <div class="pred-text">
+                            <h4>Predicted Class</h4>
+                            <h2 id="predicted-class" class="fade-in">Setosa</h2>
+                            <p id="prediction-confidence"><i class="ph ph-check-circle"></i> High Confidence Match</p>
+                        </div>
+                        <div class="pred-icon">
+                            <div class="glow-ring"></div>
+                            <i id="pred-class-icon" class="ph ph-plant"></i>
+                        </div>
+                    </section>
+
+                    <!-- Experiment 9: Data Visualization -->
+                    <section class="chart-module glass-panel">
+                        <div class="module-header">
+                            <h3><i class="ph ph-chart-polar"></i> Feature Analysis</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="radarChart"></canvas>
+                        </div>
+                    </section>
+                </div>
+            </div>
+            
+            <!-- Experiment 9: Batch Test Data Table -->
+            <section class="table-module glass-panel mt-4">
+                 <div class="module-header">
+                    <h3><i class="ph ph-table"></i> Recent Inference Logs</h3>
+                    <button class="btn ghost-btn" id="run-test"><i class="ph ph-play"></i> Run Batch Test</button>
+                </div>
+                <div class="table-container">
+                    <table id="logs-table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Features (SL, SW, PL, PW)</th>
+                                <th>Model Output</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logs-body">
+                            <!-- Populated dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
