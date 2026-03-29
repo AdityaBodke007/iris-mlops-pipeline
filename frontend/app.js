@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:8000/predict";
+const API_URL = "http://13.49.246.110:8000/predict";
 
 // DOM Elements
 const slInput = document.getElementById("sepal-length");
@@ -73,21 +73,21 @@ function initChart() {
 function updateChart(features, className) {
     if (!radarChart) return;
     radarChart.data.datasets[0].data = features;
-    
+
     // Change chart color based on class
     const tClass = className.toLowerCase();
-    if(classConfig[tClass]){
+    if (classConfig[tClass]) {
         radarChart.data.datasets[0].borderColor = classConfig[tClass].color.replace('var(--', '').replace(')', ''); // hacky var fallback
         radarChart.data.datasets[0].backgroundColor = classConfig[tClass].bg;
     }
-    
+
     radarChart.update();
 }
 
 // Debounce helper to prevent spamming API
 function debounce(func, wait) {
     let timeout;
-    return function(...args) {
+    return function (...args) {
         clearTimeout(timeout);
         timeout = setTimeout(() => func(...args), wait);
     };
@@ -96,7 +96,7 @@ function debounce(func, wait) {
 // Fetch Prediction from API
 async function fetchPrediction(features) {
     const apiKey = apiKeyInput.value.trim();
-    if(!apiKey) return null;
+    if (!apiKey) return null;
 
     try {
         const response = await fetch(API_URL, {
@@ -135,33 +135,33 @@ const triggerInference = debounce(async () => {
 
     // Read API Key
     const res = await fetchPrediction(features);
-    
+
     if (res && res.predicted_class) {
         const className = res.predicted_class;
         predClassElement.textContent = className.charAt(0).toUpperCase() + className.slice(1);
-        
+
         // Re-trigger animation
         predClassElement.classList.remove('fade-in');
-        void predClassElement.offsetWidth; 
+        void predClassElement.offsetWidth;
         predClassElement.classList.add('fade-in');
 
         // Update styling dynamically
         const cf = classConfig[className.toLowerCase()];
-        if(cf){
+        if (cf) {
             predClassElement.style.color = "#fff";
             document.querySelector('.glow-ring').style.background = cf.color;
             predIcon.className = `ph ${cf.icon}`;
             predConfidence.innerHTML = `<i class="ph ph-check-circle"></i> Prediction Successful`;
             predConfidence.style.color = "var(--success)";
         }
-        
+
         updateChart(features, className);
     } else if (res && res.error) {
         predClassElement.textContent = "Error";
-         predClassElement.style.color = "var(--danger)";
-         predConfidence.innerHTML = `<i class="ph ph-warning-circle"></i> ${res.error}`;
-         predConfidence.style.color = "var(--danger)";
-         document.querySelector('.glow-ring').style.background = "var(--danger)";
+        predClassElement.style.color = "var(--danger)";
+        predConfidence.innerHTML = `<i class="ph ph-warning-circle"></i> ${res.error}`;
+        predConfidence.style.color = "var(--danger)";
+        document.querySelector('.glow-ring').style.background = "var(--danger)";
     }
 
 }, 300); // 300ms debounce
@@ -182,7 +182,7 @@ function setAPIStatus(status, text) {
 
 // Event Listeners for Live Form
 form.addEventListener('input', (e) => {
-    if(e.target.type === 'range') {
+    if (e.target.type === 'range') {
         updateSliderValues();
         // Update chart instantly, wait for API
         const f = [slInput.value, swInput.value, plInput.value, pwInput.value];
@@ -190,7 +190,7 @@ form.addEventListener('input', (e) => {
         radarChart.update();
         triggerInference();
     }
-    if(e.target.id === 'api-key') {
+    if (e.target.id === 'api-key') {
         triggerInference();
     }
 });
@@ -204,8 +204,8 @@ runTestBtn.addEventListener('click', async () => {
     ];
 
     runTestBtn.innerHTML = `<i class="ph ph-spinner ph-spin"></i> Running...`;
-    
-    for(let tc of testCases) {
+
+    for (let tc of testCases) {
         const tr = document.createElement('tr');
         const ts = new Date().toLocaleTimeString();
         tr.innerHTML = `
@@ -217,8 +217,8 @@ runTestBtn.addEventListener('click', async () => {
         logsBody.prepend(tr); // Insert at top
 
         const res = await fetchPrediction(tc.f);
-        
-        if(res && res.predicted_class) {
+
+        if (res && res.predicted_class) {
             tr.innerHTML = `
                 <td>${ts}</td>
                 <td style="font-family: monospace;">[${tc.f.join(', ')}]</td>
@@ -226,17 +226,17 @@ runTestBtn.addEventListener('click', async () => {
                 <td><span class="status-badge success">Success</span></td>
             `;
         } else {
-             tr.innerHTML = `
+            tr.innerHTML = `
                 <td>${ts}</td>
                 <td style="font-family: monospace;">[${tc.f.join(', ')}]</td>
                 <td><span style="color:var(--danger)">Failed</span></td>
                 <td><span class="status-badge error">${res.error || 'Err'}</span></td>
             `;
         }
-        
+
         await new Promise(r => setTimeout(r, 600)); // artifical delay for visually pleasing table pop
     }
-    
+
     runTestBtn.innerHTML = `<i class="ph ph-play"></i> Run Batch Test`;
 });
 
