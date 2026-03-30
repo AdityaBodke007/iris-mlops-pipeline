@@ -7,6 +7,7 @@ from fastapi.responses import JSONResponse
 from fastapi.security import APIKeyHeader
 from pydantic import BaseModel, ConfigDict
 from contextlib import asynccontextmanager
+from prometheus_fastapi_instrumentator import Instrumentator
 
 # ==========================================
 # EXPT 3: Error handling and logging
@@ -37,6 +38,9 @@ async def lifespan(app: FastAPI):
 # EXPT 2: Create backend for model inference
 # ==========================================
 app = FastAPI(title="ML Prediction Service", lifespan=lifespan)
+
+# EXPT 11: Orchestrate Prometheus monitoring
+Instrumentator().instrument(app).expose(app)
 
 # Allow CORS for frontend requests
 app.add_middleware(

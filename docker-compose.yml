@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  # 1. The Machine Learning API
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./model.pkl:/app/model.pkl
+    networks:
+      - mlops_network
+
+  # 2. Prometheus Time-Series Database
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - mlops_network
+    depends_on:
+      - api
+
+  # 3. Grafana Analytics UI
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      - mlops_network
+    depends_on:
+      - prometheus
+
+networks:
+  mlops_network:
+    driver: bridge
