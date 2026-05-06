@@ -1,4 +1,4 @@
-const API_URL = "http://16.170.221.252:8000/predict";
+const API_URL = "http://13.63.154.230:8000/predict";
 
 // DOM Elements
 const slInput = document.getElementById("sepal-length");
